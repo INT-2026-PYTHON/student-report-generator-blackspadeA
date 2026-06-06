@@ -19,3 +19,49 @@ RECORDS: list[dict] = [
     {"name": "Diana",   "subject": "Science", "score": 70},
     {"name": "Diana",   "subject": "English", "score": 65},
 ]
+from gradebook import data  # assuming your file is gradebook/data.py
+
+def build_gradebook(records):
+    report = {}
+
+    for rec in records:
+        name = rec["name"]
+        subject = rec["subject"]
+        score = rec["score"]
+
+        # Initialize student entry if not present
+        if name not in report:
+            report[name] = {
+                "subjects": {},
+                "total": 0,
+                "count": 0
+            }
+
+        # Add subject score
+        report[name]["subjects"][subject] = score
+        report[name]["total"] += score
+        report[name]["count"] += 1
+
+    # Compute average and grade
+    for name, info in report.items():
+        avg = info["total"] / info["count"]
+        info["average"] = avg
+
+        if avg >= 90:
+            grade = "A"
+        elif avg >= 75:
+            grade = "B"
+        elif avg >= 50:
+            grade = "C"
+        else:
+            grade = "F"
+
+        info["grade"] = grade
+
+    return report
+
+
+# Example usage
+report = build_gradebook(data.RECORDS)
+for student, details in report.items():
+    print(student, details)
